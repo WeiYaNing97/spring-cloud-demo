@@ -37,6 +37,11 @@ public class OrderRestTemplate {
     }
 
 
+    /**
+     * 返回一个重试器Bean
+     *
+     * @return 一个重试器实例
+     */
     @Bean
     Retryer retryer(){
         return new Retryer.Default();

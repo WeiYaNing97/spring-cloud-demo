@@ -25,23 +25,29 @@ public class OrderMainApplication {
     @Bean
     ApplicationRunner applicationRunner(NacosConfigManager nacosConfigManager){
         return args -> {
+            // 获取ConfigService实例
             ConfigService configService = nacosConfigManager.getConfigService();
+            // 为指定的配置文件添加监听器
             configService.addListener(
-                    "service-order.yml",
-                    "DEFAULT_GROUP",
+                    "service-order.yml",  // 配置文件名
+                    "DEFAULT_GROUP",     // 配置分组
                     new Listener() {
                         @Override
                         public Executor getExecutor() {
+                            // 返回一个固定大小的线程池作为执行器
                             return Executors.newFixedThreadPool(4);
                         }
 
                         @Override
                         public void receiveConfigInfo(String s) {
+                            // 当配置信息发生变化时，打印接收到的配置信息
                             System.out.println("收到配置信息："+s);
+                            // 打印邮件通知提示
                             System.out.println("邮件通知。。。。");
                         }
                     }
             );
         };
     };
+
 }

@@ -3,34 +3,22 @@ Server:
 spring:
   profiles:
     active: dev # 激活的配置文件名称
+    include: feign # 导入配置文件
   application:
     name: service-order
   cloud:
-    nacos:
+    nacos: # nacos配置
       server-addr: 127.0.0.1:8848
       config:
         import-check:
-          enabled: false # 关闭导入检查
+          enabled: false # 关闭导入检查 虽然使用新规则配置了nacos 但是这里依然会校验。关闭校验
         namespace: ${spring.profiles.active:dev} # 命名空间  如果spring.profiles.active为空 默认dev
-    openfeign:
-      client:
-        config:
-          default:
-            logger-level: full
-            connect-timeout: 1000
-            read-timeout: 2000
-          service-product:
-            logger-level: full
-            connect-timeout: 3000
-            read-timeout: 5000
+    # Sentinel 控制台地址
+    sentinel:
+      transport:
+        dashboard: localhost:8080
 
-logging:
-  level:
-    com.atguigu.order.feign: debug # 开启feign的日志
-feign:
-  sentinel:
-    enabled: true # 开启feign对sentinel的支持
-
+# 配置文件激活规则，先配置优先于后配置，外部配置优先于内部配置，优先级从高到低
 ---
 spring:
   config:
@@ -38,7 +26,6 @@ spring:
       - nacos:service-order.yml?group=order
     activate:
       on-profile: dev # 配置文件名称
-
 ---
 spring:
   config:
@@ -46,7 +33,6 @@ spring:
       - nacos:service-order.yml?group=order
     activate:
       on-profile: prod # 配置文件名称
-
 ---
 spring:
   config:
