@@ -1,8 +1,56 @@
 Server:
   port: 8081
 spring:
+  profiles:
+    active: dev # 激活的配置文件名称
   application:
     name: service-order
   cloud:
     nacos:
       server-addr: 127.0.0.1:8848
+      config:
+        import-check:
+          enabled: false # 关闭导入检查
+        namespace: ${spring.profiles.active:dev} # 命名空间  如果spring.profiles.active为空 默认dev
+    openfeign:
+      client:
+        config:
+          default:
+            logger-level: full
+            connect-timeout: 1000
+            read-timeout: 2000
+          service-product:
+            logger-level: full
+            connect-timeout: 3000
+            read-timeout: 5000
+
+logging:
+  level:
+    com.atguigu.order.feign: debug # 开启feign的日志
+feign:
+  sentinel:
+    enabled: true # 开启feign对sentinel的支持
+
+---
+spring:
+  config:
+    import:
+      - nacos:service-order.yml?group=order
+    activate:
+      on-profile: dev # 配置文件名称
+
+---
+spring:
+  config:
+    import:
+      - nacos:service-order.yml?group=order
+    activate:
+      on-profile: prod # 配置文件名称
+
+---
+spring:
+  config:
+    import:
+      - nacos:service-order.yml?group=order
+    activate:
+      on-profile: test # 配置文件名称

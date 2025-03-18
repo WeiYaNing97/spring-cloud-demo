@@ -2,6 +2,7 @@ package com.atguigu.order.service.impl;
 
 import com.atguigu.order.bean.Order;
 import com.atguigu.order.config.OrderRestTemplate;
+import com.atguigu.order.feign.ProductFeignClient;
 import com.atguigu.order.service.OrderService;
 import com.atguigu.product.bean.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,26 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     RestTemplate restTemplate;
+    @Autowired
+    ProductFeignClient productFeignClient;
+
     @Override
     public Order getPojo() {
         // 创建一个新的Order对象
         Order order = new Order();
         // 设置订单的ID
         order.setId(1L);
-        // 获取产品对象
-        Product product = getProduct(order.getId());
+        // 使用 RestTemplate 获取产品对象
+        // 等同于 Product product = restTemplate.getForObject("http://service-product/product/" + order.getId(), Product.class);
+        //Product product = getProduct(order.getId());
+        // 使用 FeignClient 获取产品对象
+        /*
+         *使用 三个注解：@EnableFeignClients //开启Feign功能 远程调用
+         *            @FeignClient("service-product") //声明调用服务名称
+         *            @RequestMapping("/product/{id}") //声明调用服务接口路径 这里用到的是 @GetMapping("/product/{id}") 注解
+         */
+        Product product = productFeignClient.queryProductById(order.getId());
+
         /* todo 总金额 */
         // 计算总金额，并设置到订单中
         order.setTotalAAmount(product.getPrice().multiply(new BigDecimal(product.getNum())));
@@ -42,6 +55,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    /**
+     * 根据产品ID获取产品信息
+     *
+     * @param id 产品ID
+     * @return 获取到的产品信息对象，如果发生异常则返回null
+     */
     public Product getProduct(Long id) {
         // 构造访问服务-产品的URL
         String url = "http://service-product/product/" + id;
