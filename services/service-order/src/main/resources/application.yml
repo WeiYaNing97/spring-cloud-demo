@@ -1,6 +1,8 @@
 Server:
   port: 8081
 spring:
+  config:
+    import: nacos:service-order.yml # 导入nacos配置文件
   profiles:
     active: dev # 激活的配置文件名称
     include: feign # 导入配置文件
@@ -11,12 +13,14 @@ spring:
       server-addr: 127.0.0.1:8848
       config:
         import-check:
+          # 如果暂时不用nacos的配置中心功能 可以不开启校验 但是为了严谨 这里还是开启校验 默认是true
           enabled: false # 关闭导入检查 虽然使用新规则配置了nacos 但是这里依然会校验。关闭校验
         namespace: ${spring.profiles.active:dev} # 命名空间  如果spring.profiles.active为空 默认dev
     # Sentinel 控制台地址
     sentinel:
       transport:
         dashboard: localhost:8080
+      eager: true # 启动时立即初始化 默认是懒加载机制
 
 # 配置文件激活规则，先配置优先于后配置，外部配置优先于内部配置，优先级从高到低
 ---
@@ -40,3 +44,5 @@ spring:
       - nacos:service-order.yml?group=order
     activate:
       on-profile: test # 配置文件名称
+order:
+  autoConfirm=true: true

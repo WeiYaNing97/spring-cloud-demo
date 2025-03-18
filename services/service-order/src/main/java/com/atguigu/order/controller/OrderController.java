@@ -9,7 +9,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//@RefreshScope // 刷新配置中心配置 配置中心配置自动刷新
+@RefreshScope // 刷新配置中心配置 配置中心配置自动刷新
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -19,10 +19,15 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    /*@Value("${order.timeout}")
+    /**
+     * 可以根据springboot中的方式，直接 读取 Nacos配置文件 中的属性值
+     * <p>通过@Value注解，可以直接将配置文件中的属性值注入到Java代码中。</p>
+     * 但是 这个时候还不能实现配置中心配置的自动刷新 如果想实现配置中心配置的自动刷新，可以使用@RefreshScope注解
+     */
+    @Value("${order.timeout}")
     private String orderTimeout;
-    @Value("${order.autoConfirm}")
-    private String orderAutoConfirm;*/
+    @Value("${order.auto-confirm}") // 配置文件中的属性名是order.auto-confirm，所以这里的@Value注解中用的是order.auto-confirm
+    private String orderAutoConfirm;
 
     /**
      * 获取订单配置信息
@@ -34,7 +39,8 @@ public class OrderController {
     public void getConfig() {
         // 打印订单配置信息
         // orderTimeout表示订单超时时间，orderAutoConfirm表示订单自动确认
-        System.out.println("orderTimeout : " + orderYml.getTimeout() + " orderAutoConfirm : " + orderYml.getAutoConfirm());
+        System.out.println("第一种方式 orderTimeout : " + orderTimeout + " orderAutoConfirm : " + orderAutoConfirm);
+        System.out.println("第二种方式 orderTimeout : " + orderYml.getTimeout() + " orderAutoConfirm : " + orderYml.getAutoConfirm());
     }
 
 

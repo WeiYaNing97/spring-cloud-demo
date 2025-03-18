@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Component
 @ConfigurationProperties(prefix = "order") //配置绑定在nacos下，可以无需@RefreshScope
 public class OrderYml {
-
     @Value("${order.timeout}")
     String timeout;
     @Value("${order.auto-confirm}")
     String autoConfirm;
-
 }

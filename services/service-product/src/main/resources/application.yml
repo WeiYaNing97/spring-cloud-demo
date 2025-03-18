@@ -3,8 +3,16 @@ Server:
 spring:
   application:
     name: service-product
+  config:
+    import: nacos:service-product.yml
   cloud:
+    # nacos配置中心地址配置
     nacos:
       server-addr: 127.0.0.1:8848
-      config:
-        import-check.enabled: false #关闭 nacos配置中心 导入检查
+      #config:
+        #import-check.enabled: false #关闭 nacos配置中心 导入检查
+    # Sentinel 控制台地址
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+      eager: true # 启动时立即初始化 默认是懒加载机制
