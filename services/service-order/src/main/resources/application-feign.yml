@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    openfeign: # feign配置
+      client:
+        config: # 配置feign的超时时间
+          default: # 默认配置
+            logger-level: full
+            connect-timeout: 1000
+            read-timeout: 2000
+          service-product: # 服务名称配置
+            logger-level: full
+            connect-timeout: 3000
+            read-timeout: 5000
+            #request-interceptors: # 配置请求拦截器,在service-product下配置，顾只对service-product生效
+              #- com.atguigu.order.interceptor.XTokenRequestInterceptor
+
+# 开启feign的日志
+logging:
+  level:
+    com.atguigu.order.feign: debug
+# 开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
